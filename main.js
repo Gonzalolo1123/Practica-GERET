@@ -4,6 +4,7 @@ const DatabaseReader = require("./deteccionBD");
 const ExcelReader = require("./deteccionExcel");
 const connectDatabase = require("./conexionMySQL");
 const comparacion = require("./comparacion");
+const { link } = require("fs");
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -33,71 +34,92 @@ function preguntarUsuario() {
 
 // Función para ejecutar el scraper
 async function ejecutarScraper() {
-    const scraper = new PuppeteerScraper();
-    await scraper.officeDownload();
-  
-    const dbReader = new DatabaseReader(archivoDB);
-    try {
-      await dbReader.connect();
-      await dbReader.executeQuery();
-    } catch (error) {
-      console.error("Error en la ejecución de la base de datos:", error);
+  let connection;
+  try {
+    connection = await connectDatabase(host, user, password, database);
+    const dbReader = new DatabaseReader(connection);
+
+    await dbReader.executeQuery(archivoDB);
+  } catch (error) {
+    console.error("Error en la ejecución de la base de datos:", error);
+  } finally {
+    if (connection) {
+      connection.end();
     }
-  
-    const excelReader = new ExcelReader(
-      "C:\\Users\\gonza\\Desktop\\puppeteer\\Puntos de interés.xlsx"
-    );
-    await excelReader.leerArchivo();
-  
-    console.log("Comenzó la comparación de datos.");
-    // Llama a la función encontrarValoresUnicos aquí si es necesario
-    // encontrarValoresUnicos();
-    await comparacion.encontrarValoresUnicos("sitios.txt","valoresColumnaB.txt");
-  
-    rl.close();
   }
-  
-  // Función para ejecutar sin scraper
-  async function ejecutarSinScraper() {
-    let connection;
-    try {
-      connection = await connectDatabase(host,user,password,database);
-      const dbReader = new DatabaseReader(connection);
-      
-      await dbReader.executeQuery();
-    } catch (error) {
-      console.error("Error en la ejecución de la base de datos:", error);
-    } finally {
-      if (connection) {
-        connection.end();
-      }
+
+  const scraper = new PuppeteerScraper();
+  await scraper.officeDownload(
+    userOT,
+    passOT,
+    compOF,
+    navegador,
+    rutaDescargaOT,
+    linkOF
+  );
+  const excelReader = new ExcelReader(rutaArchivoEX);
+  await excelReader.leerArchivo(archivoEX);
+
+  // Llama a la función encontrarValoresUnicos aquí si es necesario
+  await comparacion.encontrarValoresUnicos(archivoDB, archivoEX,archivoCompa);
+
+  rl.close();
+}
+
+// Función para ejecutar sin scraper
+async function ejecutarSinScraper() {
+  let connection;
+  try {
+    connection = await connectDatabase(host, user, password, database);
+    const dbReader = new DatabaseReader(connection);
+
+    await dbReader.executeQuery(archivoDB);
+  } catch (error) {
+    console.error("Error en la ejecución de la base de datos:", error);
+  } finally {
+    if (connection) {
+      connection.end();
     }
-  
-    const excelReader = new ExcelReader(
-      "C:\\Users\\gonza\\Desktop\\puppeteer\\Puntos de interés.xlsx"
-    );
-    await excelReader.leerArchivo();
-  
-    console.log("Comenzó la comparación de datos.");
-    // Llama a la función encontrarValoresUnicos aquí si es necesario
-    await comparacion.encontrarValoresUnicos("sitios.txt","valoresColumnaB.txt");
-    
-  
-    rl.close();
   }
-  
+
+  const excelReader = new ExcelReader(rutaArchivoEX);
+  await excelReader.leerArchivo(archivoEX);
+
+  console.log("Comenzó la comparación de datos.");
+  // Llama a la función encontrarValoresUnicos aquí si es necesario
+  await comparacion.encontrarValoresUnicos(archivoDB, archivoEX,archivoCompa);
+
+  rl.close();
+}
+
 // Inicia preguntando al usuario
 preguntarUsuario();
 
 
-//Llamado de datos 
+//Llamado de datos
+
+//officeTrackDownload
+//datos para iniciar sesion, donde se encuentra el navegador, la ruta en donde quiere guardar el archivo, y el link de officeTrack
+const userOT = "test.geret1";
+const passOT = "Ggg08012024";
+const compOF = "entel1";
+const navegador = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+const rutaDescargaOT = "C:\\Users\\gonza\\Desktop\\puppeteer";
+const linkOF = "https://entel.officetrack.com";
+
 //Conexion
-const host= 'localhost';
-const user= 'root';
-const password= 'hola1234';
-const database= 'rasp_integracion';
+const host = "localhost";
+const user = "root";
+const password = "hola1234";
+const database = "rasp_integracion";
 
 //deteccionDB
 //este const asigna el nombre al archivo
-const archivoDB='sitios.txt';
-//aksdjladjsal
+const archivoDB = "sitios.txt";
+//deteccionExcel
+//este const asigna el nombre al archivo
+const rutaArchivoEX = rutaDescargaOT + "\\Puntos de interés.xlsx";
+const archivoEX = "nombres.txt";
+//comparacion
+//dar nombre a archivo txt que guarda los datos comparados
+const archivoCompa='DBNotOfficeTrack.txt';

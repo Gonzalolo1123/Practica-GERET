@@ -1,12 +1,11 @@
 const puppeteer = require("puppeteer");
 
 class PuppeteerScraper {
-  async officeDownload() {
+  async officeDownload(userOT, passOT, compOF,navegador, rutaDescargaOT,linkOF) {
     // Configuración de opciones de Chrome
     const chromeOptions = {
       headless: false,
-      executablePath:
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      executablePath: navegador,
       defaultViewport: null,
       args: [
         "--start-maximized",
@@ -26,21 +25,22 @@ class PuppeteerScraper {
     const client = await page.target().createCDPSession();
     await client.send("Page.setDownloadBehavior", {
       behavior: "allow",
-      downloadPath: "C:\\Users\\gonza\\Desktop\\puppeteer",
+      downloadPath: rutaDescargaOT,
       args: ["--disable-web-security"],
     });
 
     // Navega a Google (o cualquier otra acción que desees realizar)
     // Inicio del login
     try {
-      await page.goto("https://entel.officetrack.com");
-      console.log("Ingreso de datos..");
+      await page.goto(linkOF);
+      console.log("Ingreso OfficeTrack para descarga de archivo");
+      console.log("Esto puede llevar un tiempo...");
       await this.sleep(1000);
-      await page.type("#txtUserName", "test.geret1", { delay: 0 });
+      await page.type("#txtUserName", userOT, { delay: 0 });
       await this.sleep(1000);
-      await page.type("#txtPassword", "Ggg08012024", { delay: 0 });
+      await page.type("#txtPassword", passOT, { delay: 0 });
       await this.sleep(1000);
-      await page.type("#txtCompany", "entel1", { delay: 0 });
+      await page.type("#txtCompany", compOF, { delay: 0 });
       await this.sleep(1000);
       await page.click('[type="submit"]');
       await this.sleep(3000);
@@ -56,7 +56,7 @@ class PuppeteerScraper {
 
     // Aviso de sesión abierta
     try {
-      console.log("popup de sesión abierta...");
+      //console.log("popup de sesión abierta...");
       const existingSession = await page.$("#btnCloseExistingSession");
       if (existingSession) {
         await page.click("#btnCloseExistingSession");
@@ -67,7 +67,6 @@ class PuppeteerScraper {
 
     // Fin del login
     await this.sleep(3000);
-    console.log("1");
     // Acceso a una página específica:
     try {
       await page.goto(
@@ -75,11 +74,10 @@ class PuppeteerScraper {
         { waitUntil: "domcontentloaded", timeout: 0 }
       );
     } catch (error) {
-      console.error("Error pero descarga:", error);
+      console.error("Error pero descarga: ver si se puede arreglar, sino no importa");
     }
-    console.log("esperando descarga");
+    //console.log("esperando descarga");
     await this.sleep(60000); // 30 segundos adicionales (ajusta según sea necesario)
-    console.log("3");
 
     // Cierra el navegador
     await browser.close();
