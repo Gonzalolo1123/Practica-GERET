@@ -84,8 +84,6 @@ async function ejecutarSinScraper() {
 
   const excelReader = new ExcelReader(rutaArchivoEX);
   await excelReader.leerArchivo(archivoEX);
-
-  console.log("Comenzó la comparación de datos.");
   // Llama a la función encontrarValoresUnicos aquí si es necesario
   await comparacion.encontrarValoresUnicos(archivoDB, archivoEX);
 

@@ -8,7 +8,7 @@ async function connectDatabase(host,user,password,database) {
     database: database
   });
 
-  console.log('Conexión exitosa a la base de datos MySQL');
+ // console.log('Conexión exitosa a la base de datos MySQL');
 
   return connection;
 }

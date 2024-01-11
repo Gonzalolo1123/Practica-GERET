@@ -16,7 +16,7 @@ class DatabaseReader {
       // Guardar los sitios en un archivo de texto
       fs.writeFileSync(archivoDB, sitios.join('\n'));
 
-      console.log(`Sitios guardados en ${archivoDB}`);
+      //console.log(`Sitios guardados en ${archivoDB}`);
     } catch (error) {
       console.error('Error en la consulta:', error);
     } finally {

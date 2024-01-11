@@ -19,8 +19,8 @@ function encontrarValoresUnicos(archivo1, archivo2) {
 
   // Encontrar valores únicos en el primer archivo (sitios.txt)
   const valoresUnicosArchivo1 = [...datosArchivo1].filter(valor => valor !== '' && !datosArchivo2.has(valor));
-  console.log("Valores que no se encuentran en OfficeTrack:", valoresUnicosArchivo1);
-  console.log("Tamaño del arreglo: ", valoresUnicosArchivo1.length)
+  //console.log("Valores que no se encuentran en OfficeTrack:", valoresUnicosArchivo1);
+  console.log("Tamaño del arreglo final: ", valoresUnicosArchivo1.length)
 }
 /*
 // Ejemplo de uso
