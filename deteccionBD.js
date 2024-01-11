@@ -7,15 +7,14 @@ class DatabaseReader {
 
   async executeQuery(archivoDB) {
     try {
+      // Ejecutar la consulta SQL
       const [rows, fields] = await this.connection.execute('SELECT DISTINCT SITIO FROM rasp_integracion;');
 
       // Extraer los valores de SITIO y guardarlos en un arreglo
       const sitios = rows.map(row => row.SITIO);
 
-      //console.log('Sitios:', sitios);
-
       // Guardar los sitios en un archivo de texto
-      fs.writeFileSync(archivo, sitios.join('\n'));
+      fs.writeFileSync(archivoDB, sitios.join('\n'));
 
       console.log(`Sitios guardados en ${archivoDB}`);
     } catch (error) {

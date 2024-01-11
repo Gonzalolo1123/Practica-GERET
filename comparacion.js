@@ -1,7 +1,7 @@
 
 const fs = require('fs');
 
-function leerArchivo(ruta) {
+function leerArchivo(ruta,) {
   try {
     const contenido = fs.readFileSync(ruta, 'utf-8');
     const datos = contenido.trim().split('\n').filter(valor => valor.trim() !== '');  // Filtrar valores vacíos
@@ -13,7 +13,7 @@ function leerArchivo(ruta) {
   }
 }
 
-function encontrarValoresUnicos(archivo1, archivo2) {
+function encontrarValoresUnicos(archivo1, archivo2,archivoCompa) {
   const datosArchivo1 = new Set(leerArchivo(archivo1));
   const datosArchivo2 = new Set(leerArchivo(archivo2));
 
@@ -21,11 +21,11 @@ function encontrarValoresUnicos(archivo1, archivo2) {
   const valoresUnicosArchivo1 = [...datosArchivo1].filter(valor => valor !== '' && !datosArchivo2.has(valor));
 
   // Guardar los valores únicos en un archivo de texto
-  fs.writeFileSync('DBNotOfficeTrack.txt', valoresUnicosArchivo1.join('\n'));
+  fs.writeFileSync(archivoCompa, valoresUnicosArchivo1.join('\n'));
 
   // Mostrar resultados
   //console.log('Valores únicos en', archivo1, 'que no están en', archivo2, ':', valoresUnicosArchivo1);
-  console.log('Valores guardados en DBNotOfficeTrack.txt');
+  console.log(`Archivo guardado en ${archivoCompa}`);
 }
 /*
 // Ejemplo de uso

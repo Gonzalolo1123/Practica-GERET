@@ -2,13 +2,13 @@ const ExcelJS = require('exceljs');
 const fs = require('fs');
 
 class ExcelReader {
-  constructor(rutaArchivo) {
-    this.rutaArchivo = rutaArchivo;
+  constructor(rutaArchivoEX) {
+    this.rutaArchivo = rutaArchivoEX;
     this.valoresColumnaB = [];
     this.workbook = new ExcelJS.Workbook();
   }
 
-  async leerArchivo() {
+  async leerArchivo(archivoEX) {
     try {
       await this.workbook.xlsx.readFile(this.rutaArchivo);
       const hoja = this.workbook.getWorksheet('Puntos de interés');
@@ -25,12 +25,12 @@ class ExcelReader {
       });
 
       //console.log('Valores de la columna B:', this.valoresColumnaB);
-      console.log(`Cantidad de valores repetidos: ${hoja.rowCount - this.valoresColumnaB.length}`);
+      //console.log(`Cantidad de valores repetidos: ${hoja.rowCount - this.valoresColumnaB.length}`);
       
       // Guardar el arreglo en un archivo de texto
-      fs.writeFileSync('valoresColumnaB.txt', this.valoresColumnaB.join('\n'));
+      fs.writeFileSync(archivoEX, this.valoresColumnaB.join('\n'));
 
-      console.log('Arreglo completo guardado en valoresColumnaB.txt');
+      console.log(`Arreglo completo guardado en ${archivoEX}`);
     } catch (error) {
       console.log('Error al leer el archivo:', error.message);
     }
