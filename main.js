@@ -123,3 +123,4 @@ const archivoEX = "nombres.txt";
 //comparacion
 //dar nombre a archivo txt que guarda los datos comparados
 const archivoCompa='DBNotOfficeTrack.txt';
+
