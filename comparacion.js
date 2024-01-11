@@ -13,19 +13,14 @@ function leerArchivo(ruta,) {
   }
 }
 
-function encontrarValoresUnicos(archivo1, archivo2,archivoCompa) {
+function encontrarValoresUnicos(archivo1, archivo2) {
   const datosArchivo1 = new Set(leerArchivo(archivo1));
   const datosArchivo2 = new Set(leerArchivo(archivo2));
 
   // Encontrar valores únicos en el primer archivo (sitios.txt)
   const valoresUnicosArchivo1 = [...datosArchivo1].filter(valor => valor !== '' && !datosArchivo2.has(valor));
-
-  // Guardar los valores únicos en un archivo de texto
-  fs.writeFileSync(archivoCompa, valoresUnicosArchivo1.join('\n'));
-
-  // Mostrar resultados
-  //console.log('Valores únicos en', archivo1, 'que no están en', archivo2, ':', valoresUnicosArchivo1);
-  console.log(`Archivo guardado en ${archivoCompa}`);
+  console.log("Valores que no se encuentran en OfficeTrack:", valoresUnicosArchivo1);
+  console.log("Tamaño del arreglo: ", valoresUnicosArchivo1.length)
 }
 /*
 // Ejemplo de uso
