@@ -1,5 +1,5 @@
 const fs = require('fs');
-const puntos_interes = require("./puntos_interes");
+const ConsultaDB= require("./puntos_interes");
 
 function leerArchivo(ruta) {
   try {

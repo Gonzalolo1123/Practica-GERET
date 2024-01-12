@@ -74,21 +74,22 @@ async function ejecutarSinScraper() {
     const dbReader = new DatabaseReader(connection);
 
     await dbReader.executeQuery(archivoDB);
+
+    const excelReader = new ExcelReader(rutaArchivoEX);
+    await excelReader.leerArchivo(archivoEX);
+
+    // Llama a la función encontrarValoresUnicos aquí si es necesario
+    await comparacion.encontrarValoresUnicos(archivoDB, archivoEX);
   } catch (error) {
     console.error("Error en la ejecución de la base de datos:", error);
   } finally {
     if (connection) {
       connection.end();
     }
+    rl.close();
   }
-
-  const excelReader = new ExcelReader(rutaArchivoEX);
-  await excelReader.leerArchivo(archivoEX);
-  // Llama a la función encontrarValoresUnicos aquí si es necesario
-  await comparacion.encontrarValoresUnicos(archivoDB, archivoEX);
-
-  rl.close();
 }
+
 
 // Inicia preguntando al usuario
 preguntarUsuario();
@@ -121,11 +122,11 @@ const archivoDB='sitios.txt';
 //este const asigna el nombre al archivo
 const rutaArchivoEX = rutaDescargaOT + "\Puntos de interés.xlsx";
 const archivoEX = "nombres.txt";
-
+*/
 
 
 //GONZALO
-/*const userOT = "test.geret1";
+const userOT = "test.geret1";
 const passOT = "Ggg08012024";
 const compOF = "entel1";
 const navegador = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -136,4 +137,14 @@ const linkOF = "https://entel.officetrack.com";
 const host = "localhost";
 const user = "root";
 const password = "hola1234";
-const database = "rasp_integracion";*/
+const database = "rasp_integracion";
+
+//deteccionDB
+//este const asigna el nombre al archivo
+const archivoDB='sitios.txt';
+//aksdjladjsal
+
+//deteccionExcel
+//este const asigna el nombre al archivo
+const rutaArchivoEX = rutaDescargaOT + "\\Puntos de interés.xlsx";
+const archivoEX = "nombres.txt";
