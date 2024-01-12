@@ -69,7 +69,7 @@ class LoadScrapper {
     } catch (error) {
       console.error("Error al cargar la página:", error);
     }
-    /* await page.type("#txtPOIName", nombreSitio, { delay: 0 });
+    await page.type("#txtPOIName", nombreSitio, { delay: 0 });
     await this.sleep(1000);
     await page.type("#txtCustomerNumber", nombreSitio, { delay: 0 });
     await this.sleep(1000);
@@ -83,21 +83,25 @@ class LoadScrapper {
     await this.sleep(1000);
     await page.click("#chkTypes_ctl00");
     await this.sleep(1000);
-    await page.click("#chkTypes_ctl01");*/
-    await this.sleep(5000);
+    await page.click("#chkTypes_ctl01");
+    await this.sleep(1000);
     await page.click("#cmbParentPoi");
     await this.sleep(1000);
     const inputElement = await page.$(".rddtFilterInput");
     await inputElement.type(POI);
-    const listItem = await page.$("li.rtLI:has(span.rtText)");
-    await listItem.click(); /*
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(1000);
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(1000);
+    await page.keyboard.press("Enter");
+    await this.sleep(1000);
     await page.click("#lblCustomData");
     await this.sleep(1000);
     await page.type("#txtPoiUserData1", nombreSitio, { delay: 0 });
     await this.sleep(1000);
     await page.type("#txtPoiUserData29", comuna, { delay: 0 });
     await this.sleep(1000);
-    await this.sleep(1000);*/
+    await this.sleep(1000);
   }
 
   sleep(ms) {
@@ -134,7 +138,7 @@ class LoadScrapper {
   const lat = "1231434";
   const lon = "12132416363";
   const comuna = "Los Lagos";
-  const POI = "z01";
+  const POI = "z12";
 
   if (browser && page) {
     // Si la sesión fue exitosa, llamar a la función AccessPage
