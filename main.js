@@ -98,8 +98,8 @@ preguntarUsuario();
 
 //officeTrackDownload
 //datos para iniciar sesion, donde se encuentra el navegador, la ruta en donde quiere guardar el archivo, y el link de officeTrack
-const userOT = "test.geret2";
-const passOT = "Fernandocc/08";
+const userOT = "test.geret1";
+const passOT = "Ggg08012024";
 const compOF = "entel1";
 const navegador = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
 const rutaDescargaOT = "C:\\Users\\ferca\\Desktop\\MAIN";
@@ -111,6 +111,7 @@ const user = "root";
 const password = "hola12345";
 const database = "rasp_integracion";
 
+
 //deteccionDB
 //este const asigna el nombre al archivo
 const archivoDB='sitios.txt';
@@ -120,14 +121,11 @@ const archivoDB='sitios.txt';
 //este const asigna el nombre al archivo
 const rutaArchivoEX = rutaDescargaOT + "\Puntos de interés.xlsx";
 const archivoEX = "nombres.txt";
-//comparacion
-//dar nombre a archivo txt que guarda los datos comparados
-const archivoCompa='DBNotOfficeTrack.txt';
-*/
+
+
 
 //GONZALO
-
-const userOT = "test.geret1";
+/*const userOT = "test.geret1";
 const passOT = "Ggg08012024";
 const compOF = "entel1";
 const navegador = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -138,16 +136,4 @@ const linkOF = "https://entel.officetrack.com";
 const host = "localhost";
 const user = "root";
 const password = "hola1234";
-const database = "rasp_integracion";
-
-
-//deteccionDB
-//este const asigna el nombre al archivo
-const archivoDB='sitios.txt';
-//aksdjladjsal
-
-//deteccionExcel
-//este const asigna el nombre al archivo
-const rutaArchivoEX = rutaDescargaOT + "\\Puntos de interés.xlsx";
-const archivoEX = "nombres.txt";
-
+const database = "rasp_integracion";*/
