@@ -84,11 +84,10 @@ async function ejecutarSinScraper() {
       archivoDB,
       archivoEX
     );
-
     const consultaDB = new ConsultaDB(connection);
     await consultaDB.executeQuery(valoresUnicos);
   } catch (error) {
-    console.error("Error en la ejecución de la base de datos:", error);
+    console.error("Error en la ejecución sin scraper:", error);
   } finally {
     if (connection) {
       connection.end();

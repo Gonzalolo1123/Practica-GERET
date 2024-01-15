@@ -6,10 +6,11 @@ class ConsultaDB {
   async executeQuery(archivoDB) {
     try {
       // Crea una cadena de marcadores de posición según la longitud del arreglo
-      const placeholders = Array(archivoDB.length).fill("?").join(", ");
+      const textoFormateado = `('${archivoDB.join("', '")}')`;
+
 
       const [rows, fields] = await this.connection.execute(
-        `SELECT SITIO, SITIO AS codigo, DIRECCION, COMUNA, LAT, LONGITUD FROM rasp_integracion WHERE SITIO IN (${placeholders});`
+        `SELECT SITIO, SITIO AS codigo, DIRECCION, COMUNA, LAT, LONGITUD FROM rasp_integracion WHERE SITIO IN ${textoFormateado};`
       );
 
       // Procesar los resultados según sea necesario.
