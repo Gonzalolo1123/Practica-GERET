@@ -36,22 +36,28 @@ function encontrarValoresUnicos(archivo1, archivo2) {
 async function UnionEXPI(rowsPI, valoresAB) {
   const resultado = [];
 
-  for (const valorAB of valoresAB) {
-    const [POI, nombre] = valorAB;
-
-    for (const rowPI of rowsPI) {
-      const { sitio, codigo, direccion, comuna, lat, longuitud } = rowPI;
-
-      // Compara nombre y sitio
-      if (sitio === nombre) {
-        // Si cumple, agrega los datos al resultado en el orden especificado
-        resultado.push([sitio, codigo, direccion, comuna, lat, longuitud, POI]);
-      }
+  for (let i = 0; i < rowsPI.length; i++) {
+    const rowPI = rowsPI[i];
+    const comuna = rowPI.COMUNA; // Asumiendo que COMUNA está en rowPI
+    
+    // Buscar si el valor de comuna está presente en valoresAB
+    const encontrado = valoresAB.some(([_, valorComuna]) => valorComuna === comuna);
+    
+    // Si se encuentra en valoresAB, agregar valorPOI a rowPI
+    if (encontrado) {
+      rowPI.valorPOI = valoresAB.find(([_, valorComuna]) => valorComuna === comuna)[0];
     }
+    
+    // Agregar a resultado
+    resultado.push(rowPI);
   }
-  console.log("A",resultado)
   return resultado;
 }
+
+
+
+
+
 
 module.exports = {
   encontrarValoresUnicos,

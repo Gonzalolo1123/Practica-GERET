@@ -2,19 +2,20 @@ const ExcelJS = require("exceljs");
 const fs = require("fs");
 
 class ExcelReader {
-  constructor(rutaArchivoEX) {
+  constructor(rutaArchivoEX,nombre) {
     this.rutaArchivo = rutaArchivoEX;
     this.valoresColumnaB = [];
     this.valoresFiltrados = [];
     this.workbook = new ExcelJS.Workbook();
     this.valoresColumnaAB = [];
     this.valorA = [];
+    this.nombre=nombre
   }
 
   async leerArchivo(archivoEX) {
     try {
       await this.workbook.xlsx.readFile(this.rutaArchivo);
-      const hoja = this.workbook.getWorksheet("Puntos de interés");
+      const hoja = this.workbook.getWorksheet(this.nombre);
 
       hoja.eachRow({ includeEmpty: false }, (row) => {
         const valorColumnaB = row.getCell("B").value; // Modificación aquí
@@ -44,24 +45,21 @@ class ExcelReader {
       // Guardar el arreglo en un archivo de texto
       fs.writeFileSync(archivoEX, this.valoresColumnaB.join("\n"));
 
-      //console.log(`cantidad valores sin duplicados ${this.valoresColumnaB.length}`);
-      //console.log(`cantidad valores expresion regular ${this.valoresFiltrados.length}`);
-      //console.log(`Arreglo completo guardado en ${archivoEX}`);
     } catch (error) {
       console.log("Error al leer el archivo:", error.message);
     }
   }
   async UnionDB() {
     await this.workbook.xlsx.readFile(this.rutaArchivo);
-    const hoja = this.workbook.getWorksheet("Puntos de interés");
+    const hoja = this.workbook.getWorksheet(this.nombre);
   
     let ultimoValorColumnaA = "";
   
     hoja.eachRow({ includeEmpty: false }, (row) => {
-      const valorA = row.getCell("A").value;
+      const valorA = row.getCell("G").value;
   
       if (valorA === undefined || valorA === null || valorA === "") {
-        row.getCell("A").value = ultimoValorColumnaA;
+        row.getCell("F").value = ultimoValorColumnaA;
         this.valorA.push(ultimoValorColumnaA.slice(0, 3));
       } else {
         ultimoValorColumnaA = valorA;
@@ -72,11 +70,8 @@ class ExcelReader {
     for (let i = 0; i < this.valorA.length; i++) {
       const parAB = [this.valorA[i], this.valoresColumnaB[i]];
       this.valoresColumnaAB.push(parAB);
-    }  
-
-    //console.log("Valores almacenados en valoresColumnaB:", this.valoresColumnaB);
-    //console.log("Valores almacenados en valorA: ", this.valorA); // Agrega este console.log
-    //console.log("Valores almacenados en this.valorAB: ", this.valoresColumnaAB);
+    } 
+    //console.log("a",this.valoresColumnaAB) 
     return this.valoresColumnaAB;
   }
 }

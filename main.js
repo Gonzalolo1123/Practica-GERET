@@ -75,11 +75,13 @@ async function ejecutarSinScraper() {
   try {
     connection = await connectDatabase(host, user, password, database);
     const dbReader = new DatabaseReader(connection);
-
     await dbReader.executeQuery(archivoDB);
 
-    const excelReader = new ExcelReader(rutaArchivoEX);
+    const excelReader = new ExcelReader(rutaArchivoEX, "Puntos de interés");
     await excelReader.leerArchivo(archivoEX);
+
+    const excelReaderTITAN = new ExcelReader(rutaTITAN, "Worksheet");
+    await excelReaderTITAN.leerArchivo(archivoTITAN);
 
     // Llama a la función encontrarValoresUnicos aquí si es necesario
     const valoresUnicos = await comparacion.encontrarValoresUnicos(
@@ -90,13 +92,12 @@ async function ejecutarSinScraper() {
     const rowsPI = await consultaPI.executeQuery(valoresUnicos);
     //console.log("Resultados de la consulta:", rowsPI);
 
-    const valoresColumnaAB = await excelReader.UnionDB();
-    //console.log("Valores columnaAB: ",valoresColumnaAB)
-    
-    const ListPage= await comparacion.UnionEXPI(
-      rowsPI,
-      valoresColumnaAB
-    );
+    const valoresColumnaAB = await excelReaderTITAN.UnionDB();
+    //console.log("resultado: ", valoresColumnaAB[0]);
+
+    const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
+    console.log("q",(ListPage.length/7));
+
     //console.log("Lista final antes de la automatizacion:",ListPage);
     /*const classIngreso = new LoadScrapper();
     const LoginAuto = classIngreso.Login(
@@ -153,4 +154,6 @@ const archivoDB = "sitios.txt";
 //deteccionExcel
 //este const asigna el nombre al archivo
 const rutaArchivoEX = rutaDescargaOT + "\\Puntos de interés.xlsx";
+const rutaTITAN = rutaDescargaOT + "\\TITAN.xlsx";
 const archivoEX = "nombres.txt";
+const archivoTITAN = "TITANasda.xlxs";
