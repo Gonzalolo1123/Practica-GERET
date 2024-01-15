@@ -4,6 +4,7 @@ const DatabaseReader = require("./deteccionBD");
 const ExcelReader = require("./deteccionExcel");
 const connectDatabase = require("./conexionMySQL");
 const comparacion = require("./comparacion");
+const ConsultaDB = require("./puntos_interes");
 const { link } = require("fs");
 
 const rl = readline.createInterface({
@@ -79,7 +80,13 @@ async function ejecutarSinScraper() {
     await excelReader.leerArchivo(archivoEX);
 
     // Llama a la función encontrarValoresUnicos aquí si es necesario
-    await comparacion.encontrarValoresUnicos(archivoDB, archivoEX);
+    const valoresUnicos = comparacion.encontrarValoresUnicos(
+      archivoDB,
+      archivoEX
+    );
+
+    const consultaDB = new ConsultaDB(connection);
+    await consultaDB.executeQuery(valoresUnicos);
   } catch (error) {
     console.error("Error en la ejecución de la base de datos:", error);
   } finally {
@@ -89,7 +96,6 @@ async function ejecutarSinScraper() {
     rl.close();
   }
 }
-
 
 // Inicia preguntando al usuario
 preguntarUsuario();
@@ -124,7 +130,6 @@ const rutaArchivoEX = rutaDescargaOT + "\Puntos de interés.xlsx";
 const archivoEX = "nombres.txt";
 */
 
-
 //GONZALO
 const userOT = "test.geret1";
 const passOT = "Ggg08012024";
@@ -141,7 +146,7 @@ const database = "rasp_integracion";
 
 //deteccionDB
 //este const asigna el nombre al archivo
-const archivoDB='sitios.txt';
+const archivoDB = "sitios.txt";
 //aksdjladjsal
 
 //deteccionExcel

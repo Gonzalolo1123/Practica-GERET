@@ -19,9 +19,6 @@ class DatabaseReader {
       //console.log(`Sitios guardados en ${archivoDB}`);
     } catch (error) {
       console.error('Error en la consulta:', error);
-    } finally {
-      // Cerrar la conexión al finalizar
-      this.connection.end();
     }
   }
 }
