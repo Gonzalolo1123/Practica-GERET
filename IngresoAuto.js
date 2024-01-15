@@ -58,10 +58,10 @@ class LoadScrapper {
 
     await this.sleep(3000);
 
-    return { browser, page }; // Retornar la instancia del navegador y de la página
+    return page;
   }
 
-  async AccessPage(page, nombreSitio, cuidad, calle, lat, lon, comuna, POI) {
+  async AccessPage(page, nombreSitio, cuidad, direccion, lat, longitud, comuna, POI) {
     try {
       await page.goto(
         "https://entel.officetrack.com/PointsOfInterest/PointOfInterestProperties.aspx?Mode=New&ParentPoiId="
@@ -75,11 +75,11 @@ class LoadScrapper {
     await this.sleep(1000);
     await page.type("#txtCity", cuidad, { delay: 0 });
     await this.sleep(1000);
-    await page.type("#txtStreet", calle, { delay: 0 });
+    await page.type("#txtStreet", direccion, { delay: 0 });
     await this.sleep(1000);
     await page.type("#txtX", lat, { delay: 0 });
     await this.sleep(1000);
-    await page.type("#txtY", lon, { delay: 0 });
+    await page.type("#txtY", longitud, { delay: 0 });
     await this.sleep(1000);
     await page.click("#chkTypes_ctl00");
     await this.sleep(1000);
@@ -109,54 +109,4 @@ class LoadScrapper {
   }
 }
 
-(async () => {
-  // Código de prueba
-  const userOT = "test.geret1";
-  const passOT = "Ggg08012024";
-  const compOF = "entel1";
-  const navegador =
-    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-  const rutaDescargaOT = "C:\\Users\\gonza\\Desktop\\puppeteer";
-  const linkOF = "https://entel.officetrack.com";
-
-  // Crear una instancia de LoadScrapper
-  const scraper = new LoadScrapper();
-
-  // Llamar a la función Login con los parámetros necesarios
-  const { browser, page } = await scraper.Login(
-    userOT,
-    passOT,
-    compOF,
-    navegador,
-    rutaDescargaOT,
-    linkOF
-  );
-
-  const nombreSitio = "sitio1";
-  const cuidad = "Osorno";
-  const calle = "Los Pumas";
-  const lat = "1231434";
-  const lon = "12132416363";
-  const comuna = "Los Lagos";
-  const POI = "z12";
-
-  if (browser && page) {
-    // Si la sesión fue exitosa, llamar a la función AccessPage
-    await scraper.AccessPage(
-      page,
-      nombreSitio,
-      cuidad,
-      calle,
-      lat,
-      lon,
-      comuna,
-      POI
-    );
-
-    // Agregar una pausa si es necesario antes de cerrar el navegador
-    await scraper.sleep(10000);
-
-    // Cerrar el navegador después de completar todas las operaciones
-    await browser.close();
-  }
-})();
+module.exports=LoadScrapper;

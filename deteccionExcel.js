@@ -5,8 +5,10 @@ class ExcelReader {
   constructor(rutaArchivoEX) {
     this.rutaArchivo = rutaArchivoEX;
     this.valoresColumnaB = [];
-    this.valoresFiltrados=[];
+    this.valoresFiltrados = [];
     this.workbook = new ExcelJS.Workbook();
+    this.valoresColumnaAB = [];
+    this.valorA = [];
   }
 
   async leerArchivo(archivoEX) {
@@ -48,6 +50,34 @@ class ExcelReader {
     } catch (error) {
       console.log("Error al leer el archivo:", error.message);
     }
+  }
+  async UnionDB() {
+    await this.workbook.xlsx.readFile(this.rutaArchivo);
+    const hoja = this.workbook.getWorksheet("Puntos de interés");
+  
+    let ultimoValorColumnaA = "";
+  
+    hoja.eachRow({ includeEmpty: false }, (row) => {
+      const valorA = row.getCell("A").value;
+  
+      if (valorA === undefined || valorA === null || valorA === "") {
+        row.getCell("A").value = ultimoValorColumnaA;
+        this.valorA.push(ultimoValorColumnaA.slice(0, 3));
+      } else {
+        ultimoValorColumnaA = valorA;
+        this.valorA.push(ultimoValorColumnaA.slice(0, 3));
+      }
+    });
+  
+    for (let i = 0; i < this.valorA.length; i++) {
+      const parAB = [this.valorA[i], this.valoresColumnaB[i]];
+      this.valoresColumnaAB.push(parAB);
+    }  
+
+    //console.log("Valores almacenados en valoresColumnaB:", this.valoresColumnaB);
+    //console.log("Valores almacenados en valorA: ", this.valorA); // Agrega este console.log
+    //console.log("Valores almacenados en this.valorAB: ", this.valoresColumnaAB);
+    return this.valoresColumnaAB;
   }
 }
 

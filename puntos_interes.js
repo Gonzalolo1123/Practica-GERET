@@ -14,7 +14,8 @@ class ConsultaDB {
       );
 
       // Procesar los resultados según sea necesario.
-      console.log("Resultados de la consulta:", rows);
+      //console.log("Resultados de la consulta:", rows);
+      return rows
     } catch (error) {
       console.error("Error en la consulta:", error);
       if (error.code === "ER_CON_COUNT_ERROR") {

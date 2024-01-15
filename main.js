@@ -5,7 +5,9 @@ const ExcelReader = require("./deteccionExcel");
 const connectDatabase = require("./conexionMySQL");
 const comparacion = require("./comparacion");
 const ConsultaDB = require("./puntos_interes");
+const IngresoAuto = require("./IngresoAuto");
 const { link } = require("fs");
+const LoadScrapper = require("./IngresoAuto");
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -80,12 +82,43 @@ async function ejecutarSinScraper() {
     await excelReader.leerArchivo(archivoEX);
 
     // Llama a la función encontrarValoresUnicos aquí si es necesario
-    const valoresUnicos = comparacion.encontrarValoresUnicos(
+    const valoresUnicos = await comparacion.encontrarValoresUnicos(
       archivoDB,
       archivoEX
     );
-    const consultaDB = new ConsultaDB(connection);
-    await consultaDB.executeQuery(valoresUnicos);
+    const consultaPI = new ConsultaDB(connection);
+    const rowsPI = await consultaPI.executeQuery(valoresUnicos);
+    //console.log("Resultados de la consulta:", rowsPI);
+
+    const valoresColumnaAB = await excelReader.UnionDB();
+    //console.log("Valores columnaAB: ",valoresColumnaAB)
+    
+    const ListPage= await comparacion.UnionEXPI(
+      rowsPI,
+      valoresColumnaAB
+    );
+    //console.log("Lista final antes de la automatizacion:",ListPage);
+    /*const classIngreso = new LoadScrapper();
+    const LoginAuto = classIngreso.Login(
+      userOT,
+      passOT,
+      compOF,
+      navegador,
+      rutaDescargaOT,
+      linkOF
+    );
+    const AccessPage = classIngreso.AccessPage(
+      LoginAuto,
+      nombreSitio,
+      cuidad,
+      direccion,
+      lat,
+      longuitud,
+      comuna,
+      POI
+    );
+*/
+    //errores y cierre
   } catch (error) {
     console.error("Error en la ejecución sin scraper:", error);
   } finally {
@@ -98,37 +131,6 @@ async function ejecutarSinScraper() {
 
 // Inicia preguntando al usuario
 preguntarUsuario();
-
-/*
-//Llamado de datos
-
-//officeTrackDownload
-//datos para iniciar sesion, donde se encuentra el navegador, la ruta en donde quiere guardar el archivo, y el link de officeTrack
-const userOT = "test.geret1";
-const passOT = "Ggg08012024";
-const compOF = "entel1";
-const navegador = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
-const rutaDescargaOT = "C:\\Users\\ferca\\Desktop\\MAIN";
-const linkOF = "https://entel.officetrack.com";
-
-//Conexion
-const host = "localhost";
-const user = "root";
-const password = "hola12345";
-const database = "rasp_integracion";
-
-
-//deteccionDB
-//este const asigna el nombre al archivo
-const archivoDB='sitios.txt';
-//aksdjladjsal
-
-//deteccionExcel
-//este const asigna el nombre al archivo
-const rutaArchivoEX = rutaDescargaOT + "\Puntos de interés.xlsx";
-const archivoEX = "nombres.txt";
-*/
-
 //GONZALO
 const userOT = "test.geret1";
 const passOT = "Ggg08012024";
