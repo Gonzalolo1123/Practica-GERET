@@ -180,17 +180,27 @@ async function ejecutarSinScraper() {
 // Inicia preguntando al usuario
 preguntarUsuario();
 //GONZALO
-const userOT = "test.geret1";
+/*const userOT = "test.geret1";
 const passOT = "Ggg08012024";
 const compOF = "entel1";
 const navegador = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const rutaDescargaOT = "C:\\Users\\gonza\\Desktop\\puppeteer";
 const linkOF = "https://entel.officetrack.com";
+*/
+const userOT = "test.geret2";
+const passOT = "Fernandocc/08";
+const compOF = "entel1";
+const navegador = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+const rutaDescargaOT = "C:\\Users\\ferca\\Desktop\\MAIN";
+const linkOF = "https://entel.officetrack.com/";
+
+
+
 
 //Conexion
 const host = "localhost";
 const user = "root";
-const password = "hola1234";
+const password = "hola12345";
 const database = "rasp_integracion";
 
 //deteccionDB

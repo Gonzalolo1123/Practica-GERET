@@ -2,14 +2,14 @@ const ExcelJS = require("exceljs");
 const fs = require("fs");
 
 class ExcelReader {
-  constructor(rutaArchivoEX,nombre) {
+  constructor(rutaArchivoEX, nombre) {
     this.rutaArchivo = rutaArchivoEX;
     this.valoresColumnaB = [];
     this.valoresFiltrados = [];
     this.workbook = new ExcelJS.Workbook();
     this.valoresColumnaAB = [];
     this.valorA = [];
-    this.nombre=nombre
+    this.nombre = nombre
   }
 
   async leerArchivo(archivoEX) {
@@ -48,38 +48,45 @@ class ExcelReader {
     } catch (error) {
       console.log("Error al leer el archivo:", error.message);
     }
-  }async UnionDB() {
+  } async UnionDB() {
     await this.workbook.xlsx.readFile(this.rutaArchivo);
     const hoja = this.workbook.getWorksheet(this.nombre);
-  
+
     let ultimoValorColumnaA = "";
-  
+
     this.valoresColumnaAB = [];
-  
+
     hoja.eachRow({ includeEmpty: false }, (row) => {
       const valorA = row.getCell("F").value;
       const valorColumnaB = row.getCell("B").value;
-  
+
       if (valorA === undefined || valorA === null || valorA === "") {
         row.getCell("F").value = ultimoValorColumnaA;
       } else {
-        // Obtener el texto antes del último espacio en valorA
-        const ultimoEspacio = valorA.lastIndexOf(' ');
-        const textoAntesEspacio = ultimoEspacio !== -1 ? valorA.substring(0, ultimoEspacio) : valorA;
-  
+        let textoAntesEspacio = "";
+        if (valorA.startsWith("Z08")) {
+          // Si comienza con "Z08", tomar todos los caracteres hasta el último espacio
+          const ultimoEspacio = valorA.lastIndexOf(' ');
+          textoAntesEspacio = ultimoEspacio !== -1 ? valorA.substring(0, ultimoEspacio) : valorA;
+        } else {
+          // Obtener los primeros tres caracteres
+          textoAntesEspacio = valorA.substring(0, 3);
+        }
+
         row.getCell("F").value = textoAntesEspacio;
         ultimoValorColumnaA = textoAntesEspacio;
       }
-  
+
       if (valorA !== undefined && valorA !== null && valorA !== "" && valorColumnaB !== undefined) {
         this.valoresColumnaAB.push([row.getCell("F").value, valorColumnaB]);
       }
     });
-  
+
     return this.valoresColumnaAB;
   }
-  
-  
 }
+
+
+
 
 module.exports = ExcelReader;
