@@ -5,7 +5,6 @@ const ExcelReader = require("./deteccionExcel");
 const connectDatabase = require("./conexionMySQL");
 const comparacion = require("./comparacion");
 const ConsultaDB = require("./puntos_interes");
-const IngresoAuto = require("./IngresoAuto");
 const { link } = require("fs");
 const LoadScrapper = require("./IngresoAuto");
 
@@ -35,119 +34,116 @@ function preguntarUsuario() {
   );
 }
 
-async function ejecutarOperacionesComunes(connection, archivoDB, archivoEX, rutaTITAN) {
+async function ejecutarOperacionesComunes(
+  connection,
+  archivoDB,
+  archivoEX,
+  rutaTITAN
+) {
   try {
-      const dbReader = new DatabaseReader(connection);
-      await dbReader.executeQuery(archivoDB);
+    const dbReader = new DatabaseReader(connection);
+    await dbReader.executeQuery(archivoDB);
 
-      const excelReader = new ExcelReader(rutaArchivoEX, "Puntos de interés");
-      await excelReader.leerArchivo(archivoEX);
+    const excelReader = new ExcelReader(rutaArchivoEX, "Puntos de interés");
+    await excelReader.leerArchivo(archivoEX);
 
-      const excelReaderTITAN = new ExcelReader(rutaTITAN, "Worksheet");
-      await excelReaderTITAN.leerArchivo(archivoTITAN);
+    const excelReaderTITAN = new ExcelReader(rutaTITAN, "Worksheet");
+    await excelReaderTITAN.leerArchivo(archivoTITAN);
 
-      // Llama a la función encontrarValoresUnicos aquí si es necesario
-      const valoresUnicos = await comparacion.encontrarValoresUnicos(archivoDB, archivoEX);
+    // Llama a la función encontrarValoresUnicos aquí si es necesario
+    const valoresUnicos = await comparacion.encontrarValoresUnicos(
+      archivoDB,
+      archivoEX
+    );
 
-      const consultaPI = new ConsultaDB(connection);
-      const rowsPI = await consultaPI.executeQuery(valoresUnicos);
+    const consultaPI = new ConsultaDB(connection);
+    const rowsPI = await consultaPI.executeQuery(valoresUnicos);
 
-      const valoresColumnaAB = await excelReaderTITAN.UnionDB();
+    const valoresColumnaAB = await excelReaderTITAN.UnionDB();
 
-      // Resto de las operaciones comunes...
+    // Resto de las operaciones comunes...
 
-      const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
+    const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
 
-      /* 
-      // aklsjdlakjsd
-      const cantidadMostrar = 5; // Establece la cantidad exacta que deseas mostrar
+    const classIngreso = new LoadScrapper();
+    const pageInstance = await classIngreso.Login(
+      userOT,
+      passOT,
+      compOF,
+      navegador,
+      rutaDescargaOT,
+      linkOF
+    );
+    // Tamaño del lote
+    const tamanoLote = 2;
 
-      console.log("Resultados registrados para ingresar a OfficeTrack:");
-
-      for (let i = 0; i < Math.min(cantidadMostrar, ListPage.length); i++) {
-          console.log(ListPage[i]);
-      }
-      //aklsjdalksjds
-      */
-      const classIngreso = new LoadScrapper();
-      const pageInstance = await classIngreso.Login(
-          userOT,
-          passOT,
-          compOF,
-          navegador,
-          rutaDescargaOT,
-          linkOF
-      );
-      // Tamaño del lote
-      const tamanoLote = 2;
-
-      // Crear una función asincrónica para procesar un lote
-      const procesarLote = async (lote) => {
-
-          if (!pageInstance) {
-              console.log("Error al iniciar sesión.");
-              return;
-          }
-
-          // Procesar cada elemento del lote
-          for (const item of lote) {
-              const nombreSitio = item.SITIO;
-              const cuidad = item.COMUNA;
-              const direccion = item.DIRECCION;
-              const lat = item.LAT;
-              const longitud = item.LONGITUD;
-              const comuna = item.COMUNA;
-              const POI = item.valorPOI;
-
-              await classIngreso.AccessPage(
-                  pageInstance,
-                  nombreSitio,
-                  cuidad,
-                  direccion,
-                  lat,
-                  longitud,
-                  comuna,
-                  POI
-              );
-          }
-
-          // Cerrar la sesión al finalizar el lote
-          await pageInstance.close();
-      };
-
-      // Procesar por lotes
-      for (let i = 0; i < ListPage.length; i += tamanoLote) {
-          const loteActual = ListPage.slice(i, i + tamanoLote);
-
-          // Procesar el lote actual
-          await procesarLote(loteActual);
+    // Crear una función asincrónica para procesar un lote
+    const procesarLote = async (lote) => {
+      if (!pageInstance) {
+        console.log("Error al iniciar sesión.");
+        return;
       }
 
-      //errores y cierre
+      // Procesar cada elemento del lote
+      for (const item of lote) {
+        const nombreSitio = item.SITIO;
+        const cuidad = item.COMUNA;
+        const direccion = item.DIRECCION;
+        const lat = item.LAT;
+        const longitud = item.LONGITUD;
+        const comuna = item.COMUNA;
+        const POI = item.valorPOI;
+
+        await classIngreso.AccessPage(
+          pageInstance,
+          nombreSitio,
+          cuidad,
+          direccion,
+          lat,
+          longitud,
+          comuna,
+          POI
+        );
+      }
+
+      // Cerrar la sesión al finalizar el lote
+      await pageInstance.close();
+    };
+
+    // Procesar por lotes
+    for (let i = 0; i < ListPage.length; i += tamanoLote) {
+      const loteActual = ListPage.slice(i, i + tamanoLote);
+
+      // Procesar el lote actual
+      await procesarLote(loteActual);
+    }
+    //errores y cierre
   } catch (error) {
-      console.error("Error en la ejecución sin scraper:", error);
-  } finally {
-      if (connection) {
-          connection.end();
-      }
-      rl.close();
+    console.error("Error en la ejecución sin scraper:", error);
   }
-
-  return ListPage;
 }
-
 
 async function ejecutarScraper() {
   let connection;
   try {
-
     const scraper = new PuppeteerScraper();
-    await scraper.officeDownload(userOT, passOT, compOF, navegador, rutaDescargaOT, linkOF);
+    await scraper.officeDownload(
+      userOT,
+      passOT,
+      compOF,
+      navegador,
+      rutaDescargaOT,
+      linkOF
+    );
 
     connection = await connectDatabase(host, user, password, database);
-    await ejecutarOperacionesComunes(connection, archivoDB, archivoEX, rutaTITAN);
+    await ejecutarOperacionesComunes(
+      connection,
+      archivoDB,
+      archivoEX,
+      rutaTITAN
+    );
 
-  
     // Operaciones específicas de ejecutarScraper...
 
     rl.close();
@@ -164,7 +160,12 @@ async function ejecutarSinScraper() {
   let connection;
   try {
     connection = await connectDatabase(host, user, password, database);
-    await ejecutarOperacionesComunes(connection, archivoDB, archivoEX, rutaTITAN);
+    await ejecutarOperacionesComunes(
+      connection,
+      archivoDB,
+      archivoEX,
+      rutaTITAN
+    );
 
     // Operaciones específicas de ejecutarSinScraper...
 
@@ -182,27 +183,17 @@ async function ejecutarSinScraper() {
 // Inicia preguntando al usuario
 preguntarUsuario();
 //GONZALO
-/*const userOT = "test.geret1";
+const userOT = "test.geret1";
 const passOT = "Ggg08012024";
 const compOF = "entel1";
 const navegador = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const rutaDescargaOT = "C:\\Users\\gonza\\Desktop\\puppeteer";
 const linkOF = "https://entel.officetrack.com";
-*/
-const userOT = "test.geret2";
-const passOT = "Fernandocc/08";
-const compOF = "entel1";
-const navegador = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
-const rutaDescargaOT = "C:\\Users\\ferca\\Desktop\\MAIN";
-const linkOF = "https://entel.officetrack.com/";
-
-
-
 
 //Conexion
 const host = "localhost";
 const user = "root";
-const password = "hola12345";
+const password = "hola1234";
 const database = "rasp_integracion";
 
 //deteccionDB

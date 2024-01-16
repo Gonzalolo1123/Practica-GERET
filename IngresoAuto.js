@@ -116,7 +116,24 @@ class LoadScrapper {
     });
     await this.sleep(1000);
     await page.type("#txtPoiUserData29", comuna ? comuna : "", { delay: 0 });
-    await this.sleep(1000);
+    await this.sleep(5000);
+    /* 
+   // Espera a que el botón esté disponible en el DOM
+    await page.waitForSelector(".rtbButton");
+
+    // Haz clic en el botón
+    await page.click(".rtbButton");
+    await this.sleep(5000);
+    */
+    console.log([
+      "NombreSitio/Codigo: " + nombreSitio,
+      "Ciudad: " + cuidad,
+      "Calle: " + direccion,
+      "Latitud: " + lat,
+      "Longitud: " + longitud,
+      "Comuna: " + comuna,
+      "POI Padre: " + POI,
+    ]);
   }
 
   sleep(ms) {
