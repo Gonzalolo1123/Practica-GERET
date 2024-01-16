@@ -10,7 +10,7 @@ class ConsultaDB {
 
 
       const [rows, fields] = await this.connection.execute(
-        `SELECT SITIO, SITIO AS codigo, DIRECCION, COMUNA, LAT, LONGITUD FROM rasp_integracion WHERE SITIO IN ${textoFormateado};`
+        `SELECT DISTINCT SITIO, SITIO AS codigo, DIRECCION, COMUNA, LAT, LONGITUD FROM rasp_integracion WHERE SITIO IN ${textoFormateado};`
       );
 
       // Procesar los resultados según sea necesario.

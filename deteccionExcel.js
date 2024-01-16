@@ -48,32 +48,38 @@ class ExcelReader {
     } catch (error) {
       console.log("Error al leer el archivo:", error.message);
     }
-  }
-  async UnionDB() {
+  }async UnionDB() {
     await this.workbook.xlsx.readFile(this.rutaArchivo);
     const hoja = this.workbook.getWorksheet(this.nombre);
   
     let ultimoValorColumnaA = "";
   
+    this.valoresColumnaAB = [];
+  
     hoja.eachRow({ includeEmpty: false }, (row) => {
-      const valorA = row.getCell("G").value;
+      const valorA = row.getCell("F").value;
+      const valorColumnaB = row.getCell("B").value;
   
       if (valorA === undefined || valorA === null || valorA === "") {
         row.getCell("F").value = ultimoValorColumnaA;
-        this.valorA.push(ultimoValorColumnaA.slice(0, 3));
       } else {
-        ultimoValorColumnaA = valorA;
-        this.valorA.push(ultimoValorColumnaA.slice(0, 3));
+        // Obtener el texto antes del último espacio en valorA
+        const ultimoEspacio = valorA.lastIndexOf(' ');
+        const textoAntesEspacio = ultimoEspacio !== -1 ? valorA.substring(0, ultimoEspacio) : valorA;
+  
+        row.getCell("F").value = textoAntesEspacio;
+        ultimoValorColumnaA = textoAntesEspacio;
+      }
+  
+      if (valorA !== undefined && valorA !== null && valorA !== "" && valorColumnaB !== undefined) {
+        this.valoresColumnaAB.push([row.getCell("F").value, valorColumnaB]);
       }
     });
   
-    for (let i = 0; i < this.valorA.length; i++) {
-      const parAB = [this.valorA[i], this.valoresColumnaB[i]];
-      this.valoresColumnaAB.push(parAB);
-    } 
-    //console.log("a",this.valoresColumnaAB) 
     return this.valoresColumnaAB;
   }
+  
+  
 }
 
 module.exports = ExcelReader;

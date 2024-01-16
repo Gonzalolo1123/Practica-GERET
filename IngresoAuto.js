@@ -60,8 +60,16 @@ class LoadScrapper {
 
     return page;
   }
-
-  async AccessPage(page, nombreSitio, cuidad, direccion, lat, longitud, comuna, POI) {
+  async AccessPage(
+    page,
+    nombreSitio,
+    cuidad,
+    direccion,
+    lat,
+    longitud,
+    comuna,
+    POI
+  ) {
     try {
       await page.goto(
         "https://entel.officetrack.com/PointsOfInterest/PointOfInterestProperties.aspx?Mode=New&ParentPoiId="
@@ -69,17 +77,23 @@ class LoadScrapper {
     } catch (error) {
       console.error("Error al cargar la página:", error);
     }
-    await page.type("#txtPOIName", nombreSitio, { delay: 0 });
+
+    // Utilizando operadores ternarios para verificar y establecer valores predeterminados
+    await page.type("#txtPOIName", nombreSitio ? nombreSitio : "", {
+      delay: 0,
+    });
     await this.sleep(1000);
-    await page.type("#txtCustomerNumber", nombreSitio, { delay: 0 });
+    await page.type("#txtCustomerNumber", nombreSitio ? nombreSitio : "", {
+      delay: 0,
+    });
     await this.sleep(1000);
-    await page.type("#txtCity", cuidad, { delay: 0 });
+    await page.type("#txtCity", cuidad ? cuidad : "", { delay: 0 });
     await this.sleep(1000);
-    await page.type("#txtStreet", direccion, { delay: 0 });
+    await page.type("#txtStreet", direccion ? direccion : "", { delay: 0 });
     await this.sleep(1000);
-    await page.type("#txtX", lat, { delay: 0 });
+    await page.type("#txtX", lat ? lat : "", { delay: 0 });
     await this.sleep(1000);
-    await page.type("#txtY", longitud, { delay: 0 });
+    await page.type("#txtY", longitud ? longitud : "", { delay: 0 });
     await this.sleep(1000);
     await page.click("#chkTypes_ctl00");
     await this.sleep(1000);
@@ -88,7 +102,7 @@ class LoadScrapper {
     await page.click("#cmbParentPoi");
     await this.sleep(1000);
     const inputElement = await page.$(".rddtFilterInput");
-    await inputElement.type(POI);
+    await inputElement.type(POI ? POI : "");
     await page.keyboard.press("ArrowDown");
     await page.waitForTimeout(1000);
     await page.keyboard.press("ArrowDown");
@@ -97,10 +111,11 @@ class LoadScrapper {
     await this.sleep(1000);
     await page.click("#lblCustomData");
     await this.sleep(1000);
-    await page.type("#txtPoiUserData1", nombreSitio, { delay: 0 });
+    await page.type("#txtPoiUserData1", nombreSitio ? nombreSitio : "", {
+      delay: 0,
+    });
     await this.sleep(1000);
-    await page.type("#txtPoiUserData29", comuna, { delay: 0 });
-    await this.sleep(1000);
+    await page.type("#txtPoiUserData29", comuna ? comuna : "", { delay: 0 });
     await this.sleep(1000);
   }
 
@@ -109,4 +124,4 @@ class LoadScrapper {
   }
 }
 
-module.exports=LoadScrapper;
+module.exports = LoadScrapper;
