@@ -35,140 +35,142 @@ function preguntarUsuario() {
   );
 }
 
-// Función para ejecutar el scraper
+async function ejecutarOperacionesComunes(connection, archivoDB, archivoEX, rutaTITAN) {
+  try {
+      const dbReader = new DatabaseReader(connection);
+      await dbReader.executeQuery(archivoDB);
+
+      const excelReader = new ExcelReader(rutaArchivoEX, "Puntos de interés");
+      await excelReader.leerArchivo(archivoEX);
+
+      const excelReaderTITAN = new ExcelReader(rutaTITAN, "Worksheet");
+      await excelReaderTITAN.leerArchivo(archivoTITAN);
+
+      // Llama a la función encontrarValoresUnicos aquí si es necesario
+      const valoresUnicos = await comparacion.encontrarValoresUnicos(archivoDB, archivoEX);
+
+      const consultaPI = new ConsultaDB(connection);
+      const rowsPI = await consultaPI.executeQuery(valoresUnicos);
+
+      const valoresColumnaAB = await excelReaderTITAN.UnionDB();
+
+      // Resto de las operaciones comunes...
+
+      const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
+
+      /* 
+      // aklsjdlakjsd
+      const cantidadMostrar = 5; // Establece la cantidad exacta que deseas mostrar
+
+      console.log("Resultados registrados para ingresar a OfficeTrack:");
+
+      for (let i = 0; i < Math.min(cantidadMostrar, ListPage.length); i++) {
+          console.log(ListPage[i]);
+      }
+      //aklsjdalksjds
+      */
+      const classIngreso = new LoadScrapper();
+      const pageInstance = await classIngreso.Login(
+          userOT,
+          passOT,
+          compOF,
+          navegador,
+          rutaDescargaOT,
+          linkOF
+      );
+      // Tamaño del lote
+      const tamanoLote = 2;
+
+      // Crear una función asincrónica para procesar un lote
+      const procesarLote = async (lote) => {
+
+          if (!pageInstance) {
+              console.log("Error al iniciar sesión.");
+              return;
+          }
+
+          // Procesar cada elemento del lote
+          for (const item of lote) {
+              const nombreSitio = item.SITIO;
+              const cuidad = item.COMUNA;
+              const direccion = item.DIRECCION;
+              const lat = item.LAT;
+              const longitud = item.LONGITUD;
+              const comuna = item.COMUNA;
+              const POI = item.valorPOI;
+
+              await classIngreso.AccessPage(
+                  pageInstance,
+                  nombreSitio,
+                  cuidad,
+                  direccion,
+                  lat,
+                  longitud,
+                  comuna,
+                  POI
+              );
+          }
+
+          // Cerrar la sesión al finalizar el lote
+          await pageInstance.close();
+      };
+
+      // Procesar por lotes
+      for (let i = 0; i < ListPage.length; i += tamanoLote) {
+          const loteActual = ListPage.slice(i, i + tamanoLote);
+
+          // Procesar el lote actual
+          await procesarLote(loteActual);
+      }
+
+      //errores y cierre
+  } catch (error) {
+      console.error("Error en la ejecución sin scraper:", error);
+  } finally {
+      if (connection) {
+          connection.end();
+      }
+      rl.close();
+  }
+
+  return ListPage;
+}
+
+
 async function ejecutarScraper() {
   let connection;
   try {
-    connection = await connectDatabase(host, user, password, database);
-    const dbReader = new DatabaseReader(connection);
 
-    await dbReader.executeQuery(archivoDB);
+    const scraper = new PuppeteerScraper();
+    await scraper.officeDownload(userOT, passOT, compOF, navegador, rutaDescargaOT, linkOF);
+
+    connection = await connectDatabase(host, user, password, database);
+    await ejecutarOperacionesComunes(connection, archivoDB, archivoEX, rutaTITAN);
+
+  
+    // Operaciones específicas de ejecutarScraper...
+
+    rl.close();
   } catch (error) {
-    console.error("Error en la ejecución de la base de datos:", error);
+    console.error("Error en la ejecución:", error);
   } finally {
     if (connection) {
       connection.end();
     }
   }
-
-  const scraper = new PuppeteerScraper();
-  await scraper.officeDownload(
-    userOT,
-    passOT,
-    compOF,
-    navegador,
-    rutaDescargaOT,
-    linkOF
-  );
-  const excelReader = new ExcelReader(rutaArchivoEX);
-  await excelReader.leerArchivo(archivoEX);
-
-  // Llama a la función encontrarValoresUnicos aquí si es necesario
-  await comparacion.encontrarValoresUnicos(archivoDB, archivoEX);
-
-  rl.close();
 }
 
-// Función para ejecutar sin scraper
 async function ejecutarSinScraper() {
   let connection;
   try {
     connection = await connectDatabase(host, user, password, database);
-    const dbReader = new DatabaseReader(connection);
-    await dbReader.executeQuery(archivoDB);
+    await ejecutarOperacionesComunes(connection, archivoDB, archivoEX, rutaTITAN);
 
-    const excelReader = new ExcelReader(rutaArchivoEX, "Puntos de interés");
-    await excelReader.leerArchivo(archivoEX);
-
-    const excelReaderTITAN = new ExcelReader(rutaTITAN, "Worksheet");
-    await excelReaderTITAN.leerArchivo(archivoTITAN);
-
-    // Llama a la función encontrarValoresUnicos aquí si es necesario
-    const valoresUnicos = await comparacion.encontrarValoresUnicos(
-      archivoDB,
-      archivoEX
-    );
-
-    // Mostrar resultados
-    /*console.log(
-      "valores no presentes en officeTrack:",
-      valoresUnicos.length
-    );*/
-    const consultaPI = new ConsultaDB(connection);
-    const rowsPI = await consultaPI.executeQuery(valoresUnicos);
-    //console.log("Resultados de la consulta:", rowsPI);
-
-    const valoresColumnaAB = await excelReaderTITAN.UnionDB();
-    //console.log("resultado: ", valoresColumnaAB);
-    const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
-   /* 
-    // aklsjdlakjsd
-    const cantidadMostrar = 5; // Establece la cantidad exacta que deseas mostrar
-
-    console.log("Resultados registrados para ingresar a OfficeTrack:");
-
-    for (let i = 0; i < Math.min(cantidadMostrar, ListPage.length); i++) {
-      console.log(ListPage[i]);
-    }
-    //aklsjdalksjds
-    */
-    const classIngreso = new LoadScrapper();
-      const pageInstance = await classIngreso.Login(
-        userOT,
-        passOT,
-        compOF,
-        navegador,
-        rutaDescargaOT,
-        linkOF
-      );
-    // Tamaño del lote
-    const tamanoLote = 2;
-
-    // Crear una función asincrónica para procesar un lote
-    const procesarLote = async (lote) => {
-
-      if (!pageInstance) {
-        console.log("Error al iniciar sesión.");
-        return;
-      }
-
-      // Procesar cada elemento del lote
-      for (const item of lote) {
-        const nombreSitio = item.SITIO;
-        const cuidad = item.COMUNA;
-        const direccion = item.DIRECCION;
-        const lat = item.LAT;
-        const longitud = item.LONGITUD;
-        const comuna = item.COMUNA;
-        const POI = item.valorPOI;
-
-        await classIngreso.AccessPage(
-          pageInstance,
-          nombreSitio,
-          cuidad,
-          direccion,
-          lat,
-          longitud,
-          comuna,
-          POI
-        );
-      }
-
-      // Cerrar la sesión al finalizar el lote
-      await pageInstance.close();
-    };
-
-    // Procesar por lotes
-    for (let i = 0; i < ListPage.length; i += tamanoLote) {
-      const loteActual = ListPage.slice(i, i + tamanoLote);
-
-      // Procesar el lote actual
-      await procesarLote(loteActual);
-    }
+    // Operaciones específicas de ejecutarSinScraper...
 
     //errores y cierre
   } catch (error) {
-    console.error("Error en la ejecución sin scraper:", error);
+    console.error("Error en la ejecución:", error);
   } finally {
     if (connection) {
       connection.end();
