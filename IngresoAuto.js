@@ -58,7 +58,7 @@ class LoadScrapper {
 
     await this.sleep(3000);
 
-    return {page,browser};
+    return { page, browser };
   }
   async AccessPage(
     page,
@@ -76,7 +76,7 @@ class LoadScrapper {
         "https://entel.officetrack.com/PointsOfInterest/PointOfInterestProperties.aspx?Mode=New&ParentPoiId="
       );
     } catch (error) {
-      console.error("Error al cargar la página:");
+      console.error("Error al cargar la página:", error);
     }
 
     // Utilizando operadores ternarios para verificar y establecer valores predeterminados
@@ -117,7 +117,7 @@ class LoadScrapper {
     });
     await this.sleep(1000);
     await page.type("#txtPoiUserData29", comuna ? comuna : "", { delay: 0 });
-    await this.sleep(5000);
+    await this.sleep(5000); 
     // Espera a que el botón esté disponible en el DOM
     await page.waitForSelector(".rtbButton");
 
@@ -133,8 +133,8 @@ class LoadScrapper {
       guardarButton.click();
     });
     await this.sleep(15000);
-    console.log(["NombreSitio/Codigo: " + nombreSitio]);
-    return {page,browser};
+    console.log(["NombreSitio/Codigo: " + nombreSitio, "POI Padre: " + POI]);
+    return { page, browser };
   }
 
   sleep(ms) {

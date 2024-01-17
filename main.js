@@ -76,7 +76,7 @@ async function ejecutarOperacionesComunes(
         linkOF
       );
     // Tamaño del lote
-    const tamanoLote = 1;
+    const tamanoLote = 5;
 
     // Crear una función asincrónica para procesar un lote
     const procesarLote = async (lote) => {
@@ -124,7 +124,7 @@ async function ejecutarOperacionesComunes(
     }
     //errores y cierre
   } catch (error) {
-    console.error("Error en la ejecución sin scraper:");
+    console.error("Error en la ejecución sin scraper:",error);
   }
 }
 

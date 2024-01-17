@@ -31,9 +31,7 @@ function encontrarValoresUnicos(archivo1, archivo2) {
 
   // Retornar el array
   return valoresUnicosArchivo1;
-}
-
-async function UnionEXPI(rowsPI, valoresAB) {
+}async function UnionEXPI(rowsPI, valoresAB) {
   const resultado = [];
 
   for (let i = 0; i < rowsPI.length; i++) {
@@ -41,18 +39,22 @@ async function UnionEXPI(rowsPI, valoresAB) {
     const comuna = rowPI.COMUNA; // Asumiendo que COMUNA está en rowPI
     
     // Buscar si el valor de comuna está presente en valoresAB
-    const encontrado = valoresAB.some(([_, valorComuna]) => valorComuna === comuna);
+    const encontrado = valoresAB.find(
+      ([_, valorComuna]) => valorComuna.toLowerCase() === comuna.toLowerCase()
+    );
     
     // Si se encuentra en valoresAB, agregar valorPOI a rowPI
     if (encontrado) {
-      rowPI.valorPOI = valoresAB.find(([_, valorComuna]) => valorComuna === comuna)[0];
+      rowPI.valorPOI = encontrado[0];
     }
-    
+
     // Agregar a resultado
     resultado.push(rowPI);
   }
+  //console.log(resultado[0])
   return resultado;
 }
+
 
 
 
