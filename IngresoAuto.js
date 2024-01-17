@@ -58,10 +58,11 @@ class LoadScrapper {
 
     await this.sleep(3000);
 
-    return page;
+    return {page,browser};
   }
   async AccessPage(
     page,
+    browser,
     nombreSitio,
     cuidad,
     direccion,
@@ -75,7 +76,7 @@ class LoadScrapper {
         "https://entel.officetrack.com/PointsOfInterest/PointOfInterestProperties.aspx?Mode=New&ParentPoiId="
       );
     } catch (error) {
-      console.error("Error al cargar la página:", error);
+      console.error("Error al cargar la página:");
     }
 
     // Utilizando operadores ternarios para verificar y establecer valores predeterminados
@@ -117,23 +118,23 @@ class LoadScrapper {
     await this.sleep(1000);
     await page.type("#txtPoiUserData29", comuna ? comuna : "", { delay: 0 });
     await this.sleep(5000);
-    /* 
-   // Espera a que el botón esté disponible en el DOM
+    // Espera a que el botón esté disponible en el DOM
     await page.waitForSelector(".rtbButton");
 
     // Haz clic en el botón
     await page.click(".rtbButton");
     await this.sleep(5000);
-    */
-    console.log([
-      "NombreSitio/Codigo: " + nombreSitio,
-      "Ciudad: " + cuidad,
-      "Calle: " + direccion,
-      "Latitud: " + lat,
-      "Longitud: " + longitud,
-      "Comuna: " + comuna,
-      "POI Padre: " + POI,
-    ]);
+    // Esperar a que el modal esté presente en el DOM
+    await page.waitForSelector("#AuditPrompt");
+
+    // Hacer clic en el botón "Guardar" usando el atributo onclick
+    await page.evaluate(() => {
+      const guardarButton = document.querySelector("#AuditPrompt .btn-primary");
+      guardarButton.click();
+    });
+    await this.sleep(15000);
+    console.log(["NombreSitio/Codigo: " + nombreSitio]);
+    return {page,browser};
   }
 
   sleep(ms) {

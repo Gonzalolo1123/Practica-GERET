@@ -66,16 +66,17 @@ async function ejecutarOperacionesComunes(
     const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
 
     const classIngreso = new LoadScrapper();
-    const pageInstance = await classIngreso.Login(
-      userOT,
-      passOT,
-      compOF,
-      navegador,
-      rutaDescargaOT,
-      linkOF
-    );
+    const { page: pageInstance, browser: browserInstance } =
+      await classIngreso.Login(
+        userOT,
+        passOT,
+        compOF,
+        navegador,
+        rutaDescargaOT,
+        linkOF
+      );
     // Tamaño del lote
-    const tamanoLote = 2;
+    const tamanoLote = 1;
 
     // Crear una función asincrónica para procesar un lote
     const procesarLote = async (lote) => {
@@ -94,20 +95,24 @@ async function ejecutarOperacionesComunes(
         const comuna = item.COMUNA;
         const POI = item.valorPOI;
 
-        await classIngreso.AccessPage(
-          pageInstance,
-          nombreSitio,
-          cuidad,
-          direccion,
-          lat,
-          longitud,
-          comuna,
-          POI
-        );
+        var { page: page2Instance, browser: browser2Instance } =
+          await classIngreso.AccessPage(
+            pageInstance,
+            browserInstance,
+            nombreSitio,
+            cuidad,
+            direccion,
+            lat,
+            longitud,
+            comuna,
+            POI
+          );
       }
-
-      // Cerrar la sesión al finalizar el lote
-      await pageInstance.close();
+      try {
+        await browser2Instance.close();
+      } catch (error) {
+        console.error("Automatizador cerrado");
+      }
     };
 
     // Procesar por lotes
@@ -119,7 +124,7 @@ async function ejecutarOperacionesComunes(
     }
     //errores y cierre
   } catch (error) {
-    console.error("Error en la ejecución sin scraper:", error);
+    console.error("Error en la ejecución sin scraper:");
   }
 }
 
