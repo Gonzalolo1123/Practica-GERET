@@ -5,17 +5,25 @@ class ConsultaDB {
 
   async executeQuery(archivoDB) {
     try {
-      // Crea una cadena de marcadores de posición según la longitud del arreglo
-      const textoFormateado = `('${archivoDB.join("', '")}')`;
+      const sql = `
+        SELECT DISTINCT *
+        FROM RASP_INTEGRACION_COMPARATIVA
+      `;
 
+      const [rows, fields] = await this.connection.query(sql);
 
-      const [rows, fields] = await this.connection.execute(
-        `SELECT DISTINCT SITIO, SITIO AS codigo, DIRECCION, COMUNA, LAT, LONGITUD FROM rasp_integracion WHERE SITIO IN ${textoFormateado};`
-      );
+      // Filtrar las filas basándose en los valores de SITIO en archivoDB
+      const valoresFiltrados = [];
+      const sitosEncontrados = new Set();
 
-      // Procesar los resultados según sea necesario.
-      //console.log("Resultados de la consulta:", rows[0]);
-      return rows
+      for (const row of rows) {
+        if (archivoDB.includes(row.SITIO) && !sitosEncontrados.has(row.SITIO)) {
+          valoresFiltrados.push(row);
+          sitosEncontrados.add(row.SITIO);
+        }
+      }
+
+      return valoresFiltrados;
     } catch (error) {
       console.error("Error en la consulta:", error);
       if (error.code === "ER_CON_COUNT_ERROR") {
@@ -27,6 +35,8 @@ class ConsultaDB {
           "Otro tipo de error específico relacionado con la conexión."
         );
       }
+
+      throw error; // Re-lanza el error para que pueda ser manejado por la llamada a la función.
     } finally {
       if (this.connection && typeof this.connection.end === "function") {
         this.connection.end();

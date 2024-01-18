@@ -8,7 +8,7 @@ class DatabaseReader {
   async executeQuery(archivoDB) {
     try {
       // Ejecutar la consulta SQL
-      const [rows, fields] = await this.connection.execute('SELECT DISTINCT SITIO FROM rasp_integracion;');
+      const [rows, fields] = await this.connection.execute('SELECT DISTINCT SITIO FROM RASP_INTEGRACION_COMPARATIVA;');
 
       // Extraer los valores de SITIO y guardarlos en un arreglo
       const sitios = rows.map(row => row.SITIO);

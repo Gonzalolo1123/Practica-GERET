@@ -23,11 +23,6 @@ function encontrarValoresUnicos(archivo1, archivo2) {
     (valor) => valor !== "" && !datosArchivo2.has(valor)
   );
 
-  // Mostrar resultados
-  console.log(
-    "valores no presentes en officeTrack:",
-    valoresUnicosArchivo1.length
-  );
 
   // Retornar el array
   return valoresUnicosArchivo1;

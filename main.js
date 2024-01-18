@@ -8,30 +8,35 @@ const ConsultaDB = require("./puntos_interes");
 const { link } = require("fs");
 const LoadScrapper = require("./IngresoAuto");
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
-// Función para preguntar al usuario
-function preguntarUsuario() {
-  rl.question(
-    "¿Quiere descargar un archivo mas actualizado del excel? (s/n): ",
-    async (respuesta) => {
-      if (respuesta.toLowerCase() === "s") {
-        await ejecutarScraper();
-      } else if (respuesta.toLowerCase() !== "n") {
-        console.log('Respuesta no válida. Por favor, ingrese "s" o "n".');
-        preguntarUsuario(); // Vuelve a preguntar en caso de respuesta no válida
-      } else {
-        console.log(
-          "Se ejecutara el codigo el ultimo archivo descargado sin actualizarlo."
-        );
-        ejecutarSinScraper();
-        rl.close();
-      }
+async function ejecutarScraper() {
+  let connection;
+  try {
+    const scraper = new PuppeteerScraper();
+    await scraper.officeDownload(
+      userOT,
+      passOT,
+      compOF,
+      navegador,
+      rutaDescargaOT,
+      linkOF
+    );
+
+    connection = await connectDatabase(host, user, password, database);
+    await ejecutarOperacionesComunes(
+      connection,
+      archivoDB,
+      archivoEX,
+      rutaTITAN
+    );
+
+  } catch (error) {
+    console.error("Error en la ejecución:", error);
+  } finally {
+    if (connection) {
+      connection.end();
     }
-  );
+  }
 }
 
 async function ejecutarOperacionesComunes(
@@ -56,6 +61,12 @@ async function ejecutarOperacionesComunes(
       archivoEX
     );
 
+    // Mostrar resultados
+    console.log(
+      "valores no presentes en officeTrack:",
+      valoresUnicos.length
+    );
+
     const consultaPI = new ConsultaDB(connection);
     const rowsPI = await consultaPI.executeQuery(valoresUnicos);
 
@@ -64,7 +75,7 @@ async function ejecutarOperacionesComunes(
     // Resto de las operaciones comunes...
 
     const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
-
+    console.log("ListPage: ",ListPage)
     const classIngreso = new LoadScrapper();
     const { page: pageInstance, browser: browserInstance } =
       await classIngreso.Login(
@@ -124,69 +135,11 @@ async function ejecutarOperacionesComunes(
     }
     //errores y cierre
   } catch (error) {
-    console.error("Error en la ejecución sin scraper:",error);
+    console.error("Error en la ejecución sin scraper:", error);
   }
 }
 
-async function ejecutarScraper() {
-  let connection;
-  try {
-    const scraper = new PuppeteerScraper();
-    await scraper.officeDownload(
-      userOT,
-      passOT,
-      compOF,
-      navegador,
-      rutaDescargaOT,
-      linkOF
-    );
 
-    connection = await connectDatabase(host, user, password, database);
-    await ejecutarOperacionesComunes(
-      connection,
-      archivoDB,
-      archivoEX,
-      rutaTITAN
-    );
-
-    // Operaciones específicas de ejecutarScraper...
-
-    rl.close();
-  } catch (error) {
-    console.error("Error en la ejecución:", error);
-  } finally {
-    if (connection) {
-      connection.end();
-    }
-  }
-}
-
-async function ejecutarSinScraper() {
-  let connection;
-  try {
-    connection = await connectDatabase(host, user, password, database);
-    await ejecutarOperacionesComunes(
-      connection,
-      archivoDB,
-      archivoEX,
-      rutaTITAN
-    );
-
-    // Operaciones específicas de ejecutarSinScraper...
-
-    //errores y cierre
-  } catch (error) {
-    console.error("Error en la ejecución:", error);
-  } finally {
-    if (connection) {
-      connection.end();
-    }
-    rl.close();
-  }
-}
-
-// Inicia preguntando al usuario
-preguntarUsuario();
 //GONZALO
 const userOT = "test.geret1";
 const passOT = "Ggg08012024";
@@ -196,10 +149,10 @@ const rutaDescargaOT = "C:\\Users\\gonza\\Desktop\\puppeteer";
 const linkOF = "https://entel.officetrack.com";
 
 //Conexion
-const host = "localhost";
-const user = "root";
-const password = "hola1234";
-const database = "rasp_integracion";
+const host = "172.29.159.57";
+const user = "geret";
+const password = "g3r3t123";
+const database = "RASP";
 
 //deteccionDB
 //este const asigna el nombre al archivo
@@ -212,3 +165,5 @@ const rutaArchivoEX = rutaDescargaOT + "\\Puntos de interés.xlsx";
 const rutaTITAN = rutaDescargaOT + "\\TITAN.xlsx";
 const archivoEX = "nombres.txt";
 const archivoTITAN = "TITANasda.xlxs";
+
+ejecutarScraper();
