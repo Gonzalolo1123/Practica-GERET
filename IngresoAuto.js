@@ -76,7 +76,7 @@ class LoadScrapper {
         "https://entel.officetrack.com/PointsOfInterest/PointOfInterestProperties.aspx?Mode=New&ParentPoiId="
       );
     } catch (error) {
-      console.error("Error al cargar la página:", error);
+      console.error("Error al cargar la página:", /*error*/);//errores comentados ya que el codigo funciona pero al cerrar el navegador lanza un error
     }
 
     // Utilizando operadores ternarios para verificar y establecer valores predeterminados

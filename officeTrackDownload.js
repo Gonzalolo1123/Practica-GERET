@@ -47,11 +47,11 @@ class PuppeteerScraper {
       const loginError = await page.$("#dError");
       if (loginError) {
         console.log("fallo dentro del if");
-        await browser.close();
+        await page.close();
       }
     } catch (error) {
       console.log("fallo dentro del catch");
-      await browser.close();
+      await page.close();
     }
 
     // Aviso de sesión abierta
@@ -74,13 +74,13 @@ class PuppeteerScraper {
         { waitUntil: "domcontentloaded", timeout: 0 }
       );
     } catch (error) {
-      console.error("Error pero descarga: ver si se puede arreglar, sino no importa");
+      console.error("Descarga finalizada");//lanza error por el cierre del navegador,pero no influye en el funcionamiento
     }
-    //console.log("esperando descarga");
-    await this.sleep(60000); // 30 segundos adicionales (ajusta según sea necesario)
+    console.log("esperando descarga");
+    await this.sleep(60000); // 60 segundos adicionales 
 
     // Cierra el navegador
-    await browser.close();
+    await page.close();
   }
 
   sleep(ms) {

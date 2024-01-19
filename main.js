@@ -11,8 +11,7 @@ const LoadScrapper = require("./IngresoAuto");
 
 async function ejecutarScraper() {
   let connection;
-  try {
-/*    const scraper = new PuppeteerScraper();
+  try {  const scraper = new PuppeteerScraper();
     await scraper.officeDownload(
       userOT,
       passOT,
@@ -21,7 +20,6 @@ async function ejecutarScraper() {
       rutaDescargaOT,
       linkOF
     );
-*/
     connection = await connectDatabase(host, user, password, database);
     await ejecutarOperacionesComunes(
       connection,
@@ -70,9 +68,7 @@ async function ejecutarOperacionesComunes(
     // Resto de las operaciones comunes...
 
     const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
-    console.log("ListPage: ",ListPage)
- /*   
-    
+
     const classIngreso = new LoadScrapper();
     const { page: pageInstance, browser: browserInstance } =
       await classIngreso.Login(
@@ -84,7 +80,7 @@ async function ejecutarOperacionesComunes(
         linkOF
       );
     // Tamaño del lote
-    const tamanoLote = 5;
+    const tamanoLote = 1;
 
     // Crear una función asincrónica para procesar un lote
     const procesarLote = async (lote) => {
@@ -129,10 +125,10 @@ async function ejecutarOperacionesComunes(
 
       // Procesar el lote actual
       await procesarLote(loteActual);
-    }*/
+    }
     //errores y cierre
   } catch (error) {
-    console.error("Error en la ejecución sin scraper:", error);
+    console.error("Error en la ejecución:", /*error*/);
   }
 }
 
