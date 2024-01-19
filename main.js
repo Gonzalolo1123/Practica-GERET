@@ -12,7 +12,7 @@ const LoadScrapper = require("./IngresoAuto");
 async function ejecutarScraper() {
   let connection;
   try {
-    const scraper = new PuppeteerScraper();
+/*    const scraper = new PuppeteerScraper();
     await scraper.officeDownload(
       userOT,
       passOT,
@@ -21,12 +21,10 @@ async function ejecutarScraper() {
       rutaDescargaOT,
       linkOF
     );
-
+*/
     connection = await connectDatabase(host, user, password, database);
     await ejecutarOperacionesComunes(
       connection,
-      archivoDB,
-      archivoEX,
       rutaTITAN
     );
 
@@ -41,19 +39,17 @@ async function ejecutarScraper() {
 
 async function ejecutarOperacionesComunes(
   connection,
-  archivoDB,
-  archivoEX,
   rutaTITAN
 ) {
   try {
     const dbReader = new DatabaseReader(connection);
-    await dbReader.executeQuery(archivoDB);
+    const archivoDB =await dbReader.executeQuery();
 
     const excelReader = new ExcelReader(rutaArchivoEX, "Puntos de interés");
-    await excelReader.leerArchivo(archivoEX);
+    const archivoEX = await excelReader.leerArchivo();
 
     const excelReaderTITAN = new ExcelReader(rutaTITAN, "Worksheet");
-    await excelReaderTITAN.leerArchivo(archivoTITAN);
+    await excelReaderTITAN.leerArchivo();
 
     // Llama a la función encontrarValoresUnicos aquí si es necesario
     const valoresUnicos = await comparacion.encontrarValoresUnicos(
@@ -69,13 +65,14 @@ async function ejecutarOperacionesComunes(
 
     const consultaPI = new ConsultaDB(connection);
     const rowsPI = await consultaPI.executeQuery(valoresUnicos);
-
     const valoresColumnaAB = await excelReaderTITAN.UnionDB();
 
     // Resto de las operaciones comunes...
 
     const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
     console.log("ListPage: ",ListPage)
+ /*   
+    
     const classIngreso = new LoadScrapper();
     const { page: pageInstance, browser: browserInstance } =
       await classIngreso.Login(
@@ -132,7 +129,7 @@ async function ejecutarOperacionesComunes(
 
       // Procesar el lote actual
       await procesarLote(loteActual);
-    }
+    }*/
     //errores y cierre
   } catch (error) {
     console.error("Error en la ejecución sin scraper:", error);
@@ -154,16 +151,9 @@ const user = "geret";
 const password = "g3r3t123";
 const database = "RASP";
 
-//deteccionDB
-//este const asigna el nombre al archivo
-const archivoDB = "sitios.txt";
-//aksdjladjsal
-
 //deteccionExcel
 //este const asigna el nombre al archivo
 const rutaArchivoEX = rutaDescargaOT + "\\Puntos de interés.xlsx";
 const rutaTITAN = rutaDescargaOT + "\\TITAN.xlsx";
-const archivoEX = "nombres.txt";
-const archivoTITAN = "TITANasda.xlxs";
 
 ejecutarScraper();

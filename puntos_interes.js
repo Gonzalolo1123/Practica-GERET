@@ -6,8 +6,9 @@ class ConsultaDB {
   async executeQuery(archivoDB) {
     try {
       const sql = `
+      SELECT DISTINCT * FROM(
         SELECT DISTINCT *
-        FROM RASP_INTEGRACION_COMPARATIVA
+        FROM RASP_INTEGRACION_COMPARATIVA)as subconsulta;
       `;
 
       const [rows, fields] = await this.connection.query(sql);

@@ -12,7 +12,7 @@ class ExcelReader {
     this.nombre = nombre
   }
 
-  async leerArchivo(archivoEX) {
+  async leerArchivo() {
     try {
       await this.workbook.xlsx.readFile(this.rutaArchivo);
       const hoja = this.workbook.getWorksheet(this.nombre);
@@ -27,24 +27,8 @@ class ExcelReader {
           }
         }
       });
-
-      for (var i = 0; i < this.valoresColumnaB.length; i++) {
-        var elemento = this.valoresColumnaB[i];
-
-        // Expresión regular para dos o tres letras seguidas de tres números
-        var regex = /^[a-zA-Z]{2,3}\d{3}$/;
-
-        // Verificar si el elemento del arreglo cumple con la expresión regular
-        if (regex.test(elemento)) {
-          this.valoresFiltrados.push(elemento);
-        } else {
-          //no paso
-        }
-      }
-
-      // Guardar el arreglo en un archivo de texto
-      fs.writeFileSync(archivoEX, this.valoresColumnaB.join("\n"));
-
+      
+      return this.valoresColumnaB;
     } catch (error) {
       console.log("Error al leer el archivo:", error.message);
     }

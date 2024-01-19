@@ -1,24 +1,25 @@
-const fs = require('fs');
-
 class DatabaseReader {
   constructor(connection) {
     this.connection = connection;
   }
 
-  async executeQuery(archivoDB) {
+  async executeQuery() {
     try {
-      // Ejecutar la consulta SQL
-      const [rows, fields] = await this.connection.execute('SELECT DISTINCT SITIO FROM RASP_INTEGRACION_COMPARATIVA;');
+      const sql = `
+      SELECT DISTINCT SITIO FROM(
+        SELECT DISTINCT SITIO
+        FROM RASP_INTEGRACION_COMPARATIVA)as subconsulta;
+      `;
+
+      const [rows] = await this.connection.query(sql);
 
       // Extraer los valores de SITIO y guardarlos en un arreglo
-      const sitios = rows.map(row => row.SITIO);
+      const sitios = rows.map((row) => row.SITIO);
 
-      // Guardar los sitios en un archivo de texto
-      fs.writeFileSync(archivoDB, sitios.join('\n'));
-
-      //console.log(`Sitios guardados en ${archivoDB}`);
+      return sitios;
     } catch (error) {
-      console.error('Error en la consulta:', error);
+      console.error("Error en la consulta:", error);
+      throw error; // Lanza nuevamente el error para que pueda ser manejado por el código que llama a esta función
     }
   }
 }

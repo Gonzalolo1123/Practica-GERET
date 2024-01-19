@@ -14,30 +14,30 @@ function leerArchivo(ruta) {
   }
 }
 
-function encontrarValoresUnicos(archivo1, archivo2) {
-  const datosArchivo1 = new Set(leerArchivo(archivo1));
-  const datosArchivo2 = new Set(leerArchivo(archivo2));
+function encontrarValoresUnicos(array1, array2) {
+  const datosArray1 = new Set(array1);
+  const datosArray2 = new Set(array2);
 
-  // Encontrar valores únicos en el primer archivo (sitios.txt)
-  const valoresUnicosArchivo1 = [...datosArchivo1].filter(
-    (valor) => valor !== "" && !datosArchivo2.has(valor)
+  // Encontrar valores únicos en el primer array
+  const valoresUnicosArray1 = [...datosArray1].filter(
+    (valor) => valor !== "" && !datosArray2.has(valor)
   );
 
-
-  // Retornar el array
-  return valoresUnicosArchivo1;
-}async function UnionEXPI(rowsPI, valoresAB) {
+  // Retornar el array con valores únicos
+  return valoresUnicosArray1;
+}
+async function UnionEXPI(rowsPI, valoresAB) {
   const resultado = [];
 
   for (let i = 0; i < rowsPI.length; i++) {
     const rowPI = rowsPI[i];
     const comuna = rowPI.COMUNA; // Asumiendo que COMUNA está en rowPI
-    
+
     // Buscar si el valor de comuna está presente en valoresAB
     const encontrado = valoresAB.find(
       ([_, valorComuna]) => valorComuna.toLowerCase() === comuna.toLowerCase()
     );
-    
+
     // Si se encuentra en valoresAB, agregar valorPOI a rowPI
     if (encontrado) {
       rowPI.valorPOI = encontrado[0];
@@ -49,12 +49,6 @@ function encontrarValoresUnicos(archivo1, archivo2) {
   //console.log(resultado[0])
   return resultado;
 }
-
-
-
-
-
-
 
 module.exports = {
   encontrarValoresUnicos,
