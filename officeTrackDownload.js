@@ -1,18 +1,27 @@
 const puppeteer = require("puppeteer");
 
 class PuppeteerScraper {
-  async officeDownload(userOT, passOT, compOF,navegador, rutaDescargaOT,linkOF) {
+  async officeDownload(
+    userOT,
+    passOT,
+    compOF,
+    navegador,
+    rutaDescargaOT,
+    linkOF
+  ) {
     // Configuración de opciones de Chrome
     const chromeOptions = {
       headless: false,
       executablePath: navegador,
       defaultViewport: null,
       args: [
-        "--start-maximized",
         "--no-sandbox",
-        "--disable-seccomp-filter-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--headless",  // Agrega esto
       ],
     };
+    
 
     // Lanza el navegador con las opciones especificadas
     const browser = await puppeteer.launch(chromeOptions);
@@ -74,10 +83,10 @@ class PuppeteerScraper {
         { waitUntil: "domcontentloaded", timeout: 0 }
       );
     } catch (error) {
-      console.error("Descarga finalizada");//lanza error por el cierre del navegador,pero no influye en el funcionamiento
+      console.error("Descarga finalizada"); //lanza error por el cierre del navegador,pero no influye en el funcionamiento
     }
     console.log("esperando descarga");
-    await this.sleep(60000); // 60 segundos adicionales 
+    await this.sleep(60000); // 60 segundos adicionales
 
     // Cierra el navegador
     await page.close();

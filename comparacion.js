@@ -1,19 +1,3 @@
-const fs = require("fs");
-
-function leerArchivo(ruta) {
-  try {
-    const contenido = fs.readFileSync(ruta, "utf-8");
-    const datos = contenido
-      .trim()
-      .split("\n")
-      .filter((valor) => valor.trim() !== ""); // Filtrar valores vacíos
-    return datos;
-  } catch (error) {
-    console.error(`Error al leer el archivo ${ruta}:`, error);
-    return [];
-  }
-}
-
 function encontrarValoresUnicos(array1, array2) {
   const datosArray1 = new Set(array1);
   const datosArray2 = new Set(array2);

@@ -11,7 +11,7 @@ const LoadScrapper = require("./IngresoAuto");
 
 async function ejecutarScraper() {
   let connection;
-  try {  const scraper = new PuppeteerScraper();
+  try {  /*const scraper = new PuppeteerScraper();
     await scraper.officeDownload(
       userOT,
       passOT,
@@ -19,7 +19,7 @@ async function ejecutarScraper() {
       navegador,
       rutaDescargaOT,
       linkOF
-    );
+    );*/
     connection = await connectDatabase(host, user, password, database);
     await ejecutarOperacionesComunes(
       connection,
@@ -68,7 +68,7 @@ async function ejecutarOperacionesComunes(
     // Resto de las operaciones comunes...
 
     const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
-
+/*
     const classIngreso = new LoadScrapper();
     const { page: pageInstance, browser: browserInstance } =
       await classIngreso.Login(
@@ -125,10 +125,11 @@ async function ejecutarOperacionesComunes(
 
       // Procesar el lote actual
       await procesarLote(loteActual);
-    }
+    }*/
     //errores y cierre
   } catch (error) {
     console.error("Error en la ejecución:", /*error*/);
+    await browser2Instance.close();
   }
 }
 
@@ -137,8 +138,8 @@ async function ejecutarOperacionesComunes(
 const userOT = "test.geret1";
 const passOT = "Ggg08012024";
 const compOF = "entel1";
-const navegador = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const rutaDescargaOT = "C:\\Users\\gonza\\Desktop\\puppeteer";
+const navegador = "/usr/bin/chromium";  // Ruta al ejecutable de Chromium en el contenedor
+const rutaDescargaOT = "/app/puppeteer";  // Ruta de descarga en el contenedor
 const linkOF = "https://entel.officetrack.com";
 
 //Conexion
@@ -149,7 +150,7 @@ const database = "RASP";
 
 //deteccionExcel
 //este const asigna el nombre al archivo
-const rutaArchivoEX = rutaDescargaOT + "\\Puntos de interés.xlsx";
-const rutaTITAN = rutaDescargaOT + "\\TITAN.xlsx";
+const rutaArchivoEX = rutaDescargaOT + "/Puntos de interés.xlsx";
+const rutaTITAN = rutaDescargaOT + "/TITAN.xlsx";
 
 ejecutarScraper();

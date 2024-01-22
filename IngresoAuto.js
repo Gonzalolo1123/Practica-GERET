@@ -7,12 +7,13 @@ class LoadScrapper {
       executablePath: navegador,
       defaultViewport: null,
       args: [
-        "--start-maximized",
         "--no-sandbox",
-        "--disable-seccomp-filter-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--headless",  // Agrega esto
       ],
     };
-
+    
     const browser = await puppeteer.launch(chromeOptions);
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(100000);

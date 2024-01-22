@@ -1,5 +1,4 @@
 const ExcelJS = require("exceljs");
-const fs = require("fs");
 
 class ExcelReader {
   constructor(rutaArchivoEX, nombre) {
