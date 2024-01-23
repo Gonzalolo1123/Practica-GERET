@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer");
 
 class LoadScrapper {
+  // Método para iniciar sesión en el sitio web.
   async Login(userOT, passOT, compOF, navegador, rutaDescargaOT, linkOF) {
     const chromeOptions = {
       headless: false,
@@ -13,7 +14,7 @@ class LoadScrapper {
         "--headless",  // Agrega esto
       ],
     };
-    
+
     const browser = await puppeteer.launch(chromeOptions);
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(100000);
@@ -61,6 +62,8 @@ class LoadScrapper {
 
     return { page, browser };
   }
+
+  // Método para acceder a una página específica y realizar ciertas acciones.
   async AccessPage(
     page,
     browser,
@@ -77,7 +80,7 @@ class LoadScrapper {
         "https://entel.officetrack.com/PointsOfInterest/PointOfInterestProperties.aspx?Mode=New&ParentPoiId="
       );
     } catch (error) {
-      console.error("Error al cargar la página:", /*error*/);//errores comentados ya que el codigo funciona pero al cerrar el navegador lanza un error
+      console.error("Error al cargar la página:", /*error*/);
     }
 
     // Utilizando operadores ternarios para verificar y establecer valores predeterminados
@@ -118,13 +121,15 @@ class LoadScrapper {
     });
     await this.sleep(1000);
     await page.type("#txtPoiUserData29", comuna ? comuna : "", { delay: 0 });
-    await this.sleep(5000); 
+    await this.sleep(5000);
+    
     // Espera a que el botón esté disponible en el DOM
     await page.waitForSelector(".rtbButton");
 
     // Haz clic en el botón
     await page.click(".rtbButton");
     await this.sleep(5000);
+    
     // Esperar a que el modal esté presente en el DOM
     await page.waitForSelector("#AuditPrompt");
 
@@ -138,9 +143,11 @@ class LoadScrapper {
     return { page, browser };
   }
 
+  // Método para pausar la ejecución por una cantidad de milisegundos.
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
-module.exports = LoadScrapper;
+module.exports = LoadScrapper; // Exporta la clase LoadScrapper para su uso en otros archivos.
+

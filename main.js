@@ -68,7 +68,7 @@ async function ejecutarOperacionesComunes(
     // Resto de las operaciones comunes...
 
     const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
-/*
+
     const classIngreso = new LoadScrapper();
     const { page: pageInstance, browser: browserInstance } =
       await classIngreso.Login(
