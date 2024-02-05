@@ -1,4 +1,3 @@
-const readline = require("readline");
 const PuppeteerScraper = require("./officeTrackDownload");
 const DatabaseReader = require("./deteccionBD");
 const ExcelReader = require("./deteccionExcel");
@@ -11,7 +10,7 @@ const LoadScrapper = require("./IngresoAuto");
 
 async function ejecutarScraper() {
   let connection;
-  try {  const scraper = new PuppeteerScraper();
+  try { const scraper = new PuppeteerScraper();
     await scraper.officeDownload(
       userOT,
       passOT,
@@ -27,7 +26,7 @@ async function ejecutarScraper() {
     );
 
   } catch (error) {
-    console.error("Error en la ejecución:", error);
+    console.error("Error en la ejecución A:", error);
   } finally {
     if (connection) {
       connection.end();
@@ -65,8 +64,6 @@ async function ejecutarOperacionesComunes(
     const rowsPI = await consultaPI.executeQuery(valoresUnicos);
     const valoresColumnaAB = await excelReaderTITAN.UnionDB();
 
-    // Resto de las operaciones comunes...
-
     const ListPage = await comparacion.UnionEXPI(rowsPI, valoresColumnaAB);
 
     const classIngreso = new LoadScrapper();
@@ -99,7 +96,7 @@ async function ejecutarOperacionesComunes(
         const comuna = item.COMUNA;
         const POI = item.valorPOI;
 
-        var { page: page2Instance, browser: browser2Instance } =
+        var { browser: browser2Instance } =
           await classIngreso.AccessPage(
             pageInstance,
             browserInstance,
@@ -114,8 +111,9 @@ async function ejecutarOperacionesComunes(
       }
       try {
         await browser2Instance.close();
-      } catch (error) {
         console.error("Automatizador cerrado");
+      } catch (error) {
+        console.error("Error al finalizar",error);
       }
     };
 
@@ -128,7 +126,7 @@ async function ejecutarOperacionesComunes(
     }
     //errores y cierre
   } catch (error) {
-    console.error("Error en la ejecución:", /*error*/);
+    console.error("Error en la ejecución B:", error);
   }
 }
 

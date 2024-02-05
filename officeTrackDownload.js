@@ -81,6 +81,7 @@ class PuppeteerScraper {
 
     // Cierra el navegador
     await page.close();
+    await browser.close();
   }
 
   sleep(ms) {
